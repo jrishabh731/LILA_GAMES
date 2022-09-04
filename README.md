@@ -22,6 +22,11 @@ multiplayer mode we will consider user as an active user for the mode and area c
 5. With this approach, we can have almost realtime data(based on TTL value) and avoid frequent queries.
 6. Ex: If we have TTL of 60 sec then for an area code, we will be hitting DB 1 request/1min.
 
+Scaling and High Performance:
+1. AsyncIO is used for IO from cache(Redis) and DB(PostgresSQL).
+2. Using orchestartor like Kubernetes, Docker-swarm the api_server service with Nginx can be used to 
+scale across multiple machines. 
+
 Assumption: 
 1. LOGIN and LOGOUT events will be sent to the service. 
 
@@ -64,19 +69,18 @@ Cache:
 ├── postgres-data
 └── services
     ├── source
-    │ ├── config
-    │ ├── handlers
+      ├── config
+      ├── handlers
     │ ├── models
-    │ └── schema
-    └── unittest
-        ├── testcase
-        └── testdata
+    │ ├── schema
+      └── services
 
 ```
  - Config folder has the db related functions. 
- - Handlers are specific files to handle login for an endpoint.
+ - Handlers(Controller) are specific files to handle login for an endpoint.
  - Models stores the ORM model.
  - Schema has the pydantic models
+ - Services has specific usecase related to objects. Ex. Redis object. 
  - Unittest has testcase and testdata.
  - Database can have database related scripts or configs, not used currently.
 
@@ -85,4 +89,10 @@ Cache:
 2. Validate POST requests for events.
 3. Schema related validations
 4. Validate count of matching events in db and as returned via API.
+
+## Future Improvements
+1. Events for LOGIN/LOGOUT will come individually and there will be too many API hits and similarly 
+many DB write and updates. Event queues like kafka,SQS, RabbitMQ can be used to store such events and bulk insert/write operation
+can be done to improve performance.
+
 

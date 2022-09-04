@@ -55,7 +55,7 @@ class MultiPlayerModeHandler:
                 mode_count.sort(key=lambda k: k.get("count", 0), reverse=True)
                 db_results_sorted = {area_code: mode_count}
             await self.cache.set_key(area_code, json.dumps(db_results_sorted), 30)
-            log.info(f"Updating cache for area_code {area_code} with {5} sec TTL.")
+            log.info(f"Updating cache for area_code {area_code} with {30} sec TTL.")
         except Exception as err:
             log.error(f"Error occured: {err}")
             raise HTTPException(

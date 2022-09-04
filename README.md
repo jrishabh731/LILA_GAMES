@@ -22,13 +22,16 @@ multiplayer mode we will consider user as an active user for the mode and area c
 5. With this approach, we can have almost realtime data(based on TTL value) and avoid frequent queries.
 6. Ex: If we have TTL of 60 sec then for an area code, we will be hitting DB 1 request/1min.
 
-Scaling and High Performance:
-1. AsyncIO is used for IO from cache(Redis) and DB(PostgresSQL).
-2. Using orchestartor like Kubernetes, Docker-swarm the api_server service with Nginx can be used to 
+Scaling and High Performance(Serving millions of users):
+1. AsyncIO is used for IO from cache(Redis) and DB(PostgresSQL). IO call will be concurrent and performance is improved.
+2. Using cache we have reduced Read query load on DB and already computed results are served to users. Based on business requirements, the expiry time for results(30 secs) can be decided depending on consistency of counts. 
+Ex: For an area code, 2 query/1 min = 2 * 1 * 60 * 24 = 2880 queries/day will be executed given every 30 sec a get request is received for an areacode. 
+3. Using orchestartor like Kubernetes, Docker-swarm the api_server service with Nginx can be used to 
 scale across multiple machines. 
 
 Assumption: 
 1. LOGIN and LOGOUT events will be sent to the service. 
+2. Results of GET API will have 30 sec delay.
 
 Schema Design:
 1. Table for storing all events: 

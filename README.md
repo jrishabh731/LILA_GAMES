@@ -26,8 +26,8 @@ Scaling and High Performance(Serving millions of users):
 1. AsyncIO is used for IO from cache(Redis) and DB(PostgresSQL). IO call will be concurrent and performance is improved.
 2. Using cache we have reduced Read query load on DB and already computed results are served to users. Based on business requirements, the expiry time for results(30 secs) can be decided depending on consistency of counts. 
 Ex: For an area code, 2 query/1 min = 2 * 1 * 60 * 24 = 2880 queries/day will be executed given every 30 sec a get request is received for an areacode. 
-3. Using orchestartor like Kubernetes, Docker-swarm the api_server service with Nginx can be used to 
-scale across multiple machines. 
+3. Using orchestartor like Kubernetes, Docker-swarm the api_server service with Nginx(Load Balancing) will be used to scale based on API hits.
+4. Redis, Postgres are highly scalable and can be instantly scaled based on db/cache load.
 
 Assumption: 
 1. LOGIN and LOGOUT events will be sent to the service. 

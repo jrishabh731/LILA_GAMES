@@ -1,0 +1,41 @@
+version: '3.4'
+services:
+  postgres:
+    restart: always
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: test_db
+    ports:
+      - "5432:5432"
+  cache:
+    image: redis/redis-stack:latest
+    container_name: cache
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --protected-mode no
+  api_server:
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./services/
+    container_name: api_server
+    environment:
+      LOG_PATH: "/by/logs/"
+      DB_PASSWORD: "postgres"
+      DB_USER: "postgres"
+      POSTGRES_DB: "test_db"
+      DB_PORT: "5432"
+      DB_HOST: "postgres"
+      REDIS_HOST: "cache"
+      REDIS_PORT: "6379"
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres
+    volumes:
+      - /by/logs:/by/logs
+      - ./postgres-data:/var/lib/postgresql/data

@@ -98,4 +98,35 @@ Cache:
 many DB write and updates. Event queues like kafka,SQS, RabbitMQ can be used to store such events and bulk insert/write operation
 can be done to improve performance.
 
+## Sample Request:
+1. GET API 
+ curl -X 'GET' \
+  'http://localhost/stats/?area_code=101' \
+  -H 'accept: application/json'
+ 
+ Response:[response_1662292218676.txt](https://github.com/jrishabh731/LILA_GAMES/files/9484607/response_1662292218676.txt)
 
+ 2. Event POST:
+ curl -X 'POST' \
+  'http://localhost/events/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "items": [{"multiplayer_mode": "Mode1", "area_code": 101, "events_name": "LOGIN", "user_id": "User1"}]
+}
+'
+ 
+Response:
+{
+  "status": true
+}
+ 3. Generate Data:
+ curl -X 'POST' \
+  'http://localhost/generate_data/' \
+  -H 'accept: application/json' \
+  -d ''
+ 
+ Reponse:
+ {
+  "cnt_records_generated": 634
+}

@@ -1,7 +1,7 @@
 # LILA Games
 
 Objective:
-1. Design a REST microservice to fetch most played multiplayer mode given area code.
+1. Design a REST microservice to fetch most played multiplayer mode given area code at any moment. 
 2. Service should be scalable and able to handler huge number of concurrent users.
 
 Endpoint:
@@ -10,9 +10,10 @@ Endpoint:
  - POST: hostname:port/generate_data/
 
 Design:
-1. Most active users can be calculated using events. Upon receiving login event from a user for an areacode and 
-multiplayer mode we will consider user as an active user for the mode and area combination.
-2. Similarly, for a LOGOUT event the user will not be considered as active user.
+1. Most active users can be calculated using events. Upon receiving login event from a user with areacode and 
+multiplayer mode we will consider user as an active user for the mode and area combination from that moment.
+2. Similarly, for a LOGOUT event the user will become an inactive user for the areacode and 
+multiplayer mode.
 3. Generally, to calculate most played multiplayer mode given an areacode we will have to
  fire queries to filter area code and then group together similar multiplayer mode 
  and calculate the total counts of each mode. As this information is frequently requested, 
@@ -29,8 +30,13 @@ Ex: For an area code, 2 query/1 min = 2 * 1 * 60 * 24 = 2880 queries/day will be
 3. Using orchestartor like Kubernetes, Docker-swarm the api_server service with Nginx(Load Balancing) will be used to scale based on API hits.
 4. Redis, Postgres are highly scalable and can be instantly scaled based on db/cache load.
 
+Tools/Tech Used: 
+1. Python3, FastAPI web framework, uvicorn (ASGI - async web server).
+2. Redis
+3. Postgres
+
 Assumption: 
-1. LOGIN and LOGOUT events will be sent to the service. 
+1. LOGIN and LOGOUT events will be sent to the service when the user logs in and out. 
 2. Results of GET API will have 30 sec delay.
 
 Schema Design:
